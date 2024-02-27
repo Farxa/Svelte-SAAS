@@ -1,12 +1,25 @@
-<section class="h-full w-full flex flex-col items-center justify-center gap-10">
-	<h1 class="text-4xl font-bold max-w-4xl px-8">
-		Welcome to your <span class="bg-[#00fe37] px-1">personal Challenge</span> @THE ARC!
-	</h1>
-	<p class="max-w-4xl px-8 text-center">
-		Wir sind froh, dass du dich der Herausforderung stellst und freuen uns auf deine Ergebnisse.
-		<br />
-		Falls du Fragen zur Challenge hast, kannst du dich jederzeit an uns wenden.
-		<br />
-		Dein Startpunkt ist die <code class="bg-dark text-white p-1 rounded">README.md</code>
-	</p>
+<section class="flex flex-col items-center justify-center mx-[32px] md:mx-[80px] gap-3">
+	<div>
+		<h1 class="text-[24px] md:text-[30px] lg:text-[36px] font-normal text-center text-[#111928]">
+			We didn't reinvent the wheel
+		</h1>
+		<h2
+			class="text-[12px] md:text-[16px] lg:text-[18px] font-normal text-center text-[#6B7280] mx-0 lg:mx-38"
+		>
+			We are strategists, designers and developers. Innovators and problem solvers. Small enough to
+			be simple and quick, but big enough to deliver the scope you want at the pace you need.
+		</h2>
+	</div>
+	<div class="grid gap-2">
+		<div class="grid grid-cols-4 gap-2">
+			<img src="/row1image1.png" alt="row1image1" class="col-span-2 w-full h-full object-cover" />
+			<img src="/row1image2.png" alt="row1image2" class="col-span-1 w-full h-full object-cover" />
+			<img src="/row1image3.png" alt="row1image3" class="col-span-1 w-full h-full object-cover" />
+		</div>
+		<div class="grid grid-cols-4 gap-2">
+			<img src="/row2image1.png" alt="row2image1" class="col-span-1 w-full h-full object-cover" />
+			<img src="/row2image2.png" alt="row2image2" class="col-span-2 w-full h-full object-cover" />
+			<img src="/row2image3.png" alt="row2image3" class="col-span-1 w-full h-full object-cover" />
+		</div>
+	</div>
 </section>
