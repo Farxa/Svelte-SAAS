@@ -1,4 +1,5 @@
 <script lang="ts">
+	import { onMount } from 'svelte';
 	import { writable } from 'svelte/store';
 	import type { Writable } from 'svelte/store';
 
@@ -14,33 +15,42 @@
 	// Derived store to determine the interval based on the toggle state
 	let interval: Writable<string> = writable('monthly');
 	let pricing: Writable<Pricing> = writable({});
+	let isLoading: Writable<boolean> = writable(false);
 
 	function formatPrice(amount: string, unit: string): string {
 		const symbol = unit === 'USD' ? '$' : unit === 'EUR' ? '€' : '';
 		return `${symbol}${amount}`;
 	}
 
-	// toggle the interval and make the API request
 	async function fetchPricing(): Promise<void> {
-		interval.update((current) => (current === 'monthly' ? 'yearly' : 'monthly'));
+		isLoading.set(true);
+		let newInterval = $interval === 'monthly' ? 'yearly' : 'monthly';
+		interval.set(newInterval);
 
-		const response = await fetch('/api/proxy', {
-			method: 'POST',
-			headers: {
-				'Content-Type': 'application/json'
-			},
-			body: JSON.stringify({
-				interval: $interval
-			})
-		});
+		try {
+			const response = await fetch('/api/proxy', {
+				method: 'POST',
+				headers: {
+					'Content-Type': 'application/json'
+				},
+				body: JSON.stringify({
+					interval: newInterval
+				})
+			});
 
-		if (response.ok) {
-			const data = await response.json();
-			pricing.set(data);
-		} else {
-			console.error('Failed to fetch data');
+			if (response.ok) {
+				const data = await response.json();
+				pricing.set(data);
+			} else {
+				console.error('Failed to fetch data');
+			}
+		} catch (error) {
+			console.error('Failed to fetch data', error);
+		} finally {
+			isLoading.set(false);
 		}
 	}
+
 	$: MonthlyChecked = $interval === 'monthly';
 	$: YearlyChecked = $interval === 'yearly';
 	$: formattedPricing = {};
@@ -52,6 +62,10 @@
 			formattedAmount: formatPrice(details.amount, details.unit),
 			mostPopular: plan === 'pro' // Highlight the "Pro" plan as most popular
 		}));
+	});
+
+	onMount(async () => {
+		await fetchPricing();
 	});
 </script>
 
@@ -79,41 +93,48 @@
 		</div>
 		<span class={`${YearlyChecked ? 'text-[#111928]' : 'text-[#6B7280]'}`}>Yearly</span>
 	</label>
-	<div class="flex flex-col md:flex-row md:justify-center md:items-stretch gap-2">
-		{#each Object.entries($pricing) as [plan, details]}
-			<div
-				class="flex flex-col items-center p-6 bg-white rounded-lg border-2 border-[#1C64F2] max-w-sm"
-			>
-				<div class="mb-2 text-sm font-semibold text-gray-700 bg-gray-200 px-3 py-1 rounded-full">
-					Most popular
-				</div>
-				<h2 class="text-2xl font-semibold text-gray-800 mb-4">Pro</h2>
-				<p class="text-4xl font-bold text-gray-900 mb-4">${'199'}</p>
-				<button class="text-blue-600 hover:text-blue-700 text-sm mb-4">
-					Go to annual plan →
-				</button>
-				<button class="bg-[#1C64F2] text-white font-bold py-2 px-4 mb-6 w-full rounded-md"
-					>Get started</button
+	{#if $isLoading}
+		<p>Loading...</p>
+	{:else}
+		<div class="flex flex-col md:flex-row md:justify-center md:items-stretch gap-2">
+			{#each Object.entries($pricing) as [plan, details]}
+				<div
+					class="flex flex-col items-center p-6 bg-white rounded-lg border-2 border-[#1C64F2] max-w-sm"
 				>
-				<ul class="w-full text-gray-600 text-left">
-					<li class="flex items-center mb-2">
-						<span class="mr-2"><img src="/credit-card.png" alt="credit card icon" /></span>
-						All tools you need to manage payments
-					</li>
-					<li class="flex items-center mb-2">
-						<span class="mr-2"><img src="/paper-airplane.png" alt="paper airplane icon" /></span>
-						Get hundreds of feature updates
-					</li>
-					<li class="flex items-center mb-2">
-						<span class="mr-2"><img src="/vector.png" alt="vector icon" /></span>
-						Financial reconciliation and reporting
-					</li>
-					<li class="flex items-center">
-						<span class="mr-2"><img src="/chat.png" alt="chat icon" /></span>
-						24x7 phone, chat, and email support
-					</li>
-				</ul>
-			</div>
-		{/each}
-	</div>
+					<div class="mb-2 text-sm font-semibold text-gray-700 bg-gray-200 px-3 py-1 rounded-full">
+						Most popular
+					</div>
+
+					<h2 class="text-2xl font-semibold text-gray-800 mb-4">{plan.toUpperCase()}</h2>
+					<p class="text-4xl font-bold text-gray-900 mb-4">
+						{formatPrice(details.amount, details.unit)}
+					</p>
+					<button on:click={fetchPricing} class="text-blue-600 hover:text-blue-700 text-sm mb-4"
+						>Go to {YearlyChecked ? 'monthly' : 'annual'} plan →</button
+					>
+					<button class="bg-[#1C64F2] text-white font-bold py-2 px-4 mb-6 w-full rounded-md"
+						>Get started</button
+					>
+					<ul class="w-full text-gray-600 text-left">
+						<li class="flex items-center mb-2">
+							<span class="mr-2"><img src="/credit-card.png" alt="credit card icon" /></span>
+							All tools you need to manage payments
+						</li>
+						<li class="flex items-center mb-2">
+							<span class="mr-2"><img src="/paper-airplane.png" alt="paper airplane icon" /></span>
+							Get hundreds of feature updates
+						</li>
+						<li class="flex items-center mb-2">
+							<span class="mr-2"><img src="/vector.png" alt="vector icon" /></span>
+							Financial reconciliation and reporting
+						</li>
+						<li class="flex items-center">
+							<span class="mr-2"><img src="/chat.png" alt="chat icon" /></span>
+							24x7 phone, chat, and email support
+						</li>
+					</ul>
+				</div>
+			{/each}
+		</div>
+	{/if}
 </section>
