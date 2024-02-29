@@ -1,23 +1,29 @@
-<section class="flex flex-col items-center justify-center mx-[32px] my-[32px] md:mx-[80px] gap-3">
-	<div class="flex flex-col items-center gap-3">
-		<h1 class="text-[24px] md:text-[30px] lg:text-[36px] text-center text-[#111928]">
-			We didn't reinvent the wheel
-		</h1>
-		<h2 class="text-[12px] md:text-[16px] lg:text-[18px] text-center text-[#6B7280] mx-0 lg:mx-38">
-			We are strategists, designers and developers. Innovators and problem solvers. Small enough to
-			be simple and quick, but big enough to deliver the scope you want at the pace you need.
-		</h2>
-	</div>
-	<div class="grid gap-2 my-[32px]">
-		<div class="grid grid-cols-4 gap-2">
-			<img src="/row1image1.png" alt="row1image1" class="col-span-2 h-full object-cover" />
-			<img src="/row1image2.png" alt="row1image2" class="col-span-1 h-full object-cover" />
-			<img src="/row1image3.png" alt="row1image3" class="col-span-1 h-full object-cover" />
-		</div>
-		<div class="grid grid-cols-4 gap-2">
-			<img src="/row2image1.png" alt="row2image1" class="col-span-1 h-full object-cover" />
-			<img src="/row2image2.png" alt="row2image2" class="col-span-2 h-full object-cover" />
-			<img src="/row2image3.png" alt="row2image3" class="col-span-1 h-full object-cover" />
-		</div>
+<script>
+	import Heading from './Heading.svelte';
+	const images = [
+		{ src: '/row1image1.png', alt: 'row1image1', span: 'col-span-2' },
+		{ src: '/row1image2.png', alt: 'row1image2', span: 'col-span-1' },
+		{ src: '/row1image3.png', alt: 'row1image3', span: 'col-span-1' },
+		{ src: '/row2image1.png', alt: 'row2image1', span: 'col-span-1' },
+		{ src: '/row2image2.png', alt: 'row2image2', span: 'col-span-2' },
+		{ src: '/row2image3.png', alt: 'row2image3', span: 'col-span-1' }
+	];
+</script>
+
+<section
+	title="introduction"
+	class="flex flex-col items-center justify-center mx-[32px] my-[32px] md:mx-[80px] gap-3"
+>
+	<Heading
+		title="We didn't reinvent the wheel"
+		description="We are strategists, designers and developers. Innovators and problem solvers. Small enough to
+        be simple and quick, but big enough to deliver the scope you want at the pace you need."
+	/>
+	<div class="grid grid-cols-4 gap-2">
+		{#each images as { src, alt, span }}
+			<div class={span}>
+				<img {src} {alt} class="w-full h-full object-cover" />
+			</div>
+		{/each}
 	</div>
 </section>
