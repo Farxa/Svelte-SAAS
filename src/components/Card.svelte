@@ -5,12 +5,36 @@
 	export let isLoading: boolean;
 	export let toggleInterval: () => Promise<void>;
 
+	enum Package {
+		all = 'all',
+		pro = 'pro',
+		platinum = 'platinum'
+	}
+
 	const features = [
-		{ img: '/credit-card.png', text: 'All tools you need to manage payments' },
-		{ img: '/paper-airplane.png', text: 'Get hundreds of feature updates' },
-		{ img: '/vector.png', text: 'Financial reconciliation and reporting' },
-		{ img: '/chat.png', text: '24x7 phone, chat, and email support' }
+		{
+			img: '/credit-card.png',
+			text: 'All tools you need to manage payments',
+			package: [Package.all]
+		},
+		{
+			img: '/paper-airplane.png',
+			text: 'Get hundreds of feature updates',
+			package: [Package.pro, Package.platinum]
+		},
+		{
+			img: '/vector.png',
+			text: 'Financial reconciliation and reporting',
+			package: [Package.platinum]
+		},
+		{ img: '/chat.png', text: '24x7 phone, chat, and email support', package: [Package.platinum] }
 	];
+	function featureUnavailable(featurePackages: Package[], packageName: string) {
+		if (featurePackages.includes(Package.all)) {
+			return false;
+		}
+		return !featurePackages.includes(packageName.toLocaleLowerCase() as Package);
+	}
 </script>
 
 <div
@@ -56,7 +80,9 @@
 				<span class="w-5 h-5 inline-block mr-4">
 					<img src={feature.img} alt={feature.text} class="w-6 h-6" />
 				</span>
-				{feature.text}
+				<span class={featureUnavailable(feature.package, name) ? 'line-through text-gray-400' : ''}>
+					{feature.text}
+				</span>
 			</li>
 			<div class="i-unicons:home w-1em h-1em" style="color: black;" />
 		{/each}

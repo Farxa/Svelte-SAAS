@@ -127,7 +127,7 @@
 			<LoadingSpinner />
 		</div>
 	{:else}
-		<div class="flex flex-col mb-6 w-full min-w-[400px] md:flex-row md:items-end gap-7">
+		<div class="flex flex-col mb-6 w-full md:flex-row md:items-end gap-7">
 			{#each formattedPricing as { name, formattedAmount, mostPopular }}
 				<Card {name} {formattedAmount} {mostPopular} {toggleInterval} isLoading={$isLoading}>
 					<span slot="buttonText">
