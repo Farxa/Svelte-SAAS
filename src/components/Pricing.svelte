@@ -34,21 +34,30 @@
 		const cachedData = localStorage.getItem(cacheKey);
 		const now = new Date().getTime();
 		let dataLoaded = false;
-		if (!$isInitialLoading) {
-			isLoading.set(true);
-		}
 
 		if (cachedData) {
 			const { data, timestamp } = JSON.parse(cachedData);
 			// if (now - timestamp < 24 * 60 * 60 * 1000) {
-			// 	pricing.set(data);
-			// 	dataLoaded = true;
-			// }
-
-			// Check if the cache is older than 20 seconds for testing purposes
-			if (now - timestamp < 20 * 1000) {
+			if (now - timestamp < 30 * 1000) {
 				pricing.set(data);
-				dataLoaded = true;
+
+				const response = await fetch('/api/proxy', {
+					method: 'POST',
+					headers: {
+						'Content-Type': 'application/json'
+					},
+					body: JSON.stringify({
+						interval: selectedInterval
+					})
+				});
+				if (response.ok) {
+					const newPrices = await response.json();
+					if (JSON.stringify(newPrices) !== JSON.stringify(data)) {
+						localStorage.setItem(cacheKey, JSON.stringify({ data: newPrices, timestamp: now }));
+						pricing.set(newPrices);
+					}
+					dataLoaded = true;
+				}
 			}
 		}
 
@@ -76,13 +85,8 @@
 			}
 		}
 
-		setTimeout(
-			() => {
-				isLoading.set(false);
-				isInitialLoading.set(false);
-			},
-			dataLoaded ? 200 : 0
-		);
+		isLoading.set(false);
+		isInitialLoading.set(false);
 	}
 
 	function toggleInterval(): Promise<void> {
