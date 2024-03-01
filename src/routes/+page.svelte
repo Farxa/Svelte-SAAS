@@ -3,5 +3,7 @@
 	import Pricing from '../components/Pricing.svelte';
 </script>
 
-<Introduction />
-<Pricing />
+<div class="px-[32px] md:px-[80px]">
+	<Introduction />
+	<Pricing />
+</div>
