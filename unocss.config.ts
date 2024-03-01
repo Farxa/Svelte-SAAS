@@ -10,6 +10,10 @@ const unoCSSConfig: VitePluginConfig = {
         'display': 'inline-block',
         'vertical-align': 'middle',
         'margin-right': '0.5rem',
+        'fill': 'currentColor',
+        'stroke': 'currentColor',
+        "'width'": '3em',
+        "height": '3em',
       },
     }),
     presetUno({
@@ -23,6 +27,7 @@ const unoCSSConfig: VitePluginConfig = {
           gray: {
             900: '#111928',
             500: '#6B7280',
+            400: '#8B8E94',
             300: '#D1D5DB',
             200: '#E5E7EB',
           },
