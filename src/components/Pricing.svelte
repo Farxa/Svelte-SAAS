@@ -2,6 +2,7 @@
 	import { onMount } from 'svelte';
 	import { writable } from 'svelte/store';
 	import type { Writable } from 'svelte/store';
+	import PageWrapper from './PageWrapper.svelte';
 	import Heading from './Heading.svelte';
 	import Slider from './Slider.svelte';
 	import LoadingSpinner from './LoadingSpinner.svelte';
@@ -19,6 +20,7 @@
 	let interval: Writable<string> = writable('monthly');
 	let pricing: Writable<Pricing> = writable({});
 	let isLoading: Writable<boolean> = writable(false);
+	let isInitialLoading: Writable<boolean> = writable(true);
 
 	function formatPrice(amount: string, unit: string): string {
 		const symbol = unit === 'USD' ? '$' : unit === 'EUR' ? '€' : '';
@@ -27,28 +29,60 @@
 
 	async function fetchPricing(selectedInterval: string): Promise<void> {
 		isLoading.set(true);
-		try {
-			const response = await fetch('/api/proxy', {
-				method: 'POST',
-				headers: {
-					'Content-Type': 'application/json'
-				},
-				body: JSON.stringify({
-					interval: selectedInterval
-				})
-			});
 
-			if (response.ok) {
-				const data = await response.json();
-				pricing.set(data);
-			} else {
-				console.error('Failed to fetch data');
-			}
-		} catch (error) {
-			console.error('Failed to fetch data', error);
-		} finally {
-			isLoading.set(false);
+		const cacheKey = `pricing_${selectedInterval}`;
+		const cachedData = localStorage.getItem(cacheKey);
+		const now = new Date().getTime();
+		let dataLoaded = false;
+		if (!$isInitialLoading) {
+			isLoading.set(true);
 		}
+
+		if (cachedData) {
+			const { data, timestamp } = JSON.parse(cachedData);
+			// if (now - timestamp < 24 * 60 * 60 * 1000) {
+			// 	pricing.set(data);
+			// 	dataLoaded = true;
+			// }
+
+			// Check if the cache is older than 20 seconds for testing purposes
+			if (now - timestamp < 20 * 1000) {
+				pricing.set(data);
+				dataLoaded = true;
+			}
+		}
+
+		if (!dataLoaded) {
+			try {
+				const response = await fetch('/api/proxy', {
+					method: 'POST',
+					headers: {
+						'Content-Type': 'application/json'
+					},
+					body: JSON.stringify({
+						interval: selectedInterval
+					})
+				});
+
+				if (response.ok) {
+					const data = await response.json();
+					localStorage.setItem(cacheKey, JSON.stringify({ data, timestamp: now }));
+					pricing.set(data);
+				} else {
+					console.error('Failed to fetch data');
+				}
+			} catch (error) {
+				console.error('Failed to fetch data', error);
+			}
+		}
+
+		setTimeout(
+			() => {
+				isLoading.set(false);
+				isInitialLoading.set(false);
+			},
+			dataLoaded ? 200 : 0
+		);
 	}
 
 	function toggleInterval(): Promise<void> {
@@ -77,22 +111,21 @@
 	});
 </script>
 
-<section class="flex flex-col items-center justify-center mx-[32px] my-[38px] md:mx-[80px] gap-3">
+<PageWrapper>
 	<Heading
 		title="We didn't reinvent the wheel"
-		description="We are strategists, designers and developers. Innovators and problem solvers. Small enough to
-        be simple and quick, but big enough to deliver the scope you want at the pace you need."
+		description="We are strategists, designers and developers..."
 	/>
 	<Slider bind:MonthlyChecked bind:YearlyChecked {toggleInterval} />
 
-	{#if $isLoading}
+	{#if $isInitialLoading}
 		<div class="flex justify-center items-center min-h-[500px]">
 			<LoadingSpinner />
 		</div>
 	{:else}
-		<div class="flex flex-col mb-6 lg:flex-row lg:items-end gap-7">
+		<div class="flex flex-col mb-6 w-full min-w-[400px] md:flex-row md:items-end gap-7">
 			{#each formattedPricing as { name, formattedAmount, mostPopular }}
-				<Card {name} {formattedAmount} {mostPopular} {toggleInterval}>
+				<Card {name} {formattedAmount} {mostPopular} {toggleInterval} isLoading={$isLoading}>
 					<span slot="buttonText">
 						Go to {YearlyChecked ? 'monthly' : 'annual'} plan →
 					</span>
@@ -100,4 +133,4 @@
 			{/each}
 		</div>
 	{/if}
-</section>
+</PageWrapper>
