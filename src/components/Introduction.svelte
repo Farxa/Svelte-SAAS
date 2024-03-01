@@ -1,4 +1,5 @@
 <script>
+	import PageWrapper from './PageWrapper.svelte';
 	import Heading from './Heading.svelte';
 	const images = [
 		{ src: '/row1image1.png', alt: 'row1image1', span: 'col-span-2' },
@@ -10,20 +11,16 @@
 	];
 </script>
 
-<section
-	title="introduction"
-	class="flex flex-col items-center justify-center mx-[32px] my-[32px] md:mx-[80px] gap-3"
->
+<PageWrapper>
 	<Heading
 		title="We didn't reinvent the wheel"
-		description="We are strategists, designers and developers. Innovators and problem solvers. Small enough to
-        be simple and quick, but big enough to deliver the scope you want at the pace you need."
+		description="We are strategists, designers and developers..."
 	/>
 	<div class="grid grid-cols-4 gap-2">
 		{#each images as { src, alt, span }}
-			<div class={span}>
-				<img {src} {alt} class="w-full h-full object-cover" />
+			<div class={`${span} min-h-[200px]`}>
+				<img {src} {alt} class="rounded-lg h-full w-full object-cover" />
 			</div>
 		{/each}
 	</div>
-</section>
+</PageWrapper>
