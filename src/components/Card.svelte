@@ -79,12 +79,12 @@
 			<li class="flex items-center mb-2">
 				<span class="w-5 h-5 inline-block mr-4">
 					<img src={feature.img} alt={feature.text} class="w-6 h-6" />
+					<div class="i-logos-github" style="color: black;" />
 				</span>
 				<span class={featureUnavailable(feature.package, name) ? 'line-through text-gray-400' : ''}>
 					{feature.text}
 				</span>
 			</li>
-			<div class="i-unicons:home w-1em h-1em" style="color: black;" />
 		{/each}
 	</ul>
 </div>
