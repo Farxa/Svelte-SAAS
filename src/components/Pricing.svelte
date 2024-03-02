@@ -37,10 +37,9 @@
 
 		if (cachedData) {
 			const { data, timestamp } = JSON.parse(cachedData);
-			// if (now - timestamp < 24 * 60 * 60 * 1000) {
-			if (now - timestamp < 30 * 1000) {
+			if (now - timestamp < 24 * 60 * 60 * 1000) {
 				pricing.set(data);
-
+				isInitialLoading.set(false);
 				const response = await fetch('/api/proxy', {
 					method: 'POST',
 					headers: {
@@ -86,7 +85,6 @@
 		}
 
 		isLoading.set(false);
-		isInitialLoading.set(false);
 	}
 
 	function toggleInterval(): Promise<void> {
