@@ -25,7 +25,7 @@
 			package: [Package.pro, Package.platinum]
 		},
 		{
-			icon: 'lets-icons:chart-fill',
+			icon: 'mingcute:presentation-1-fill',
 			text: 'Financial reconciliation and reporting',
 			package: [Package.platinum]
 		},
