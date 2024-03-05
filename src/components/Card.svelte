@@ -44,7 +44,7 @@
 </script>
 
 <div
-	class={`flex flex-col items-center p-6 bg-white rounded-lg border-2 mb-4 ${
+	class={`flex flex-col items-center p-6 bg-white rounded-lg border-2 my-4 ${
 		mostPopular ? 'border-[#1C64F2]' : ''
 	} shadow-md w-full h-fit gap-3`}
 >
@@ -83,14 +83,12 @@
 	<ul class="w-full text-gray-600 text-left">
 		{#each features as feature}
 			<li class="flex items-center mb-2">
-				<!-- <span class="w-5 h-5 inline-block"> -->
 				<IconifyIcon
 					icon={feature.icon}
 					class="inline-block mr-2 {featureUnavailable(feature.package, name)
 						? 'text-gray-400'
 						: 'text-current'}"
 				/>
-				<!-- </span> -->
 				<span class={featureUnavailable(feature.package, name) ? 'line-through text-gray-400' : ''}>
 					{feature.text}
 				</span>
