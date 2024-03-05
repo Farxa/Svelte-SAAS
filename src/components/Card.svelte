@@ -1,4 +1,6 @@
 <script lang="ts">
+	import IconifyIcon from '@iconify/svelte';
+
 	export let name: string;
 	export let formattedAmount: string;
 	export let mostPopular: boolean;
@@ -13,21 +15,25 @@
 
 	const features = [
 		{
-			img: '/credit-card.png',
+			icon: 'tabler:credit-card-filled',
 			text: 'All tools you need to manage payments',
 			package: [Package.all]
 		},
 		{
-			img: '/paper-airplane.png',
+			icon: 'heroicons-solid:paper-airplane',
 			text: 'Get hundreds of feature updates',
 			package: [Package.pro, Package.platinum]
 		},
 		{
-			img: '/vector.png',
+			icon: 'lets-icons:chart-fill',
 			text: 'Financial reconciliation and reporting',
 			package: [Package.platinum]
 		},
-		{ img: '/chat.png', text: '24x7 phone, chat, and email support', package: [Package.platinum] }
+		{
+			icon: 'heroicons-solid:chat',
+			text: '24x7 phone, chat, and email support',
+			package: [Package.platinum]
+		}
 	];
 	function featureUnavailable(featurePackages: Package[], packageName: string) {
 		if (featurePackages.includes(Package.all)) {
@@ -77,10 +83,14 @@
 	<ul class="w-full text-gray-600 text-left">
 		{#each features as feature}
 			<li class="flex items-center mb-2">
-				<span class="w-5 h-5 inline-block mr-4">
-					<img src={feature.img} alt={feature.text} class="w-6 h-6" />
-					<div class="i-logos-github" style="color: black;" />
-				</span>
+				<!-- <span class="w-5 h-5 inline-block"> -->
+				<IconifyIcon
+					icon={feature.icon}
+					class="inline-block mr-2 {featureUnavailable(feature.package, name)
+						? 'text-gray-400'
+						: 'text-current'}"
+				/>
+				<!-- </span> -->
 				<span class={featureUnavailable(feature.package, name) ? 'line-through text-gray-400' : ''}>
 					{feature.text}
 				</span>
