@@ -1,6 +1,6 @@
 <script lang="ts">
-	export let title: string = 'Default Title';
-	export let description: string = 'Default description.';
+	export let title: string = '';
+	export let description: string = '';
 	export let itemsAlignment: string = 'items-center';
 	export let isXl: boolean = false;
 </script>

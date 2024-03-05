@@ -11,8 +11,8 @@
 <div>
 	<Hero />
 	<div class="px-[32px] md:px-[80px]">
-		<Introduction />
 		<Clients />
+		<Introduction />
 		<Features />
 		<Pricing />
 		<Newsletter />
