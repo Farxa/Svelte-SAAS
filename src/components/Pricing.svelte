@@ -27,6 +27,40 @@
 		return `${symbol}${amount}`;
 	}
 
+	async function fetchAndCacheData(
+		selectedInterval: string,
+		cacheKey: string,
+		now: number,
+		useCacheData: boolean = false,
+		cachedData: any = null
+	): Promise<boolean> {
+		if (useCacheData && cachedData) {
+			pricing.set(cachedData.data);
+			isInitialLoading.set(false);
+			return false;
+		}
+
+		const response = await fetch('/api/proxy', {
+			method: 'POST',
+			headers: {
+				'Content-Type': 'application/json'
+			},
+			body: JSON.stringify({
+				interval: selectedInterval
+			})
+		});
+
+		if (response.ok) {
+			const newPrices = await response.json();
+			if (!useCacheData || JSON.stringify(newPrices) !== JSON.stringify(cachedData.data)) {
+				localStorage.setItem(cacheKey, JSON.stringify({ data: newPrices, timestamp: now }));
+				pricing.set(newPrices);
+				return true;
+			}
+		}
+		return false;
+	}
+
 	async function fetchPricing(selectedInterval: string): Promise<void> {
 		isLoading.set(true);
 
@@ -36,52 +70,14 @@
 		let dataLoaded = false;
 
 		if (cachedData) {
-			const { data, timestamp } = JSON.parse(cachedData);
-			if (now - timestamp < 24 * 60 * 60 * 1000) {
-				pricing.set(data);
-				isInitialLoading.set(false);
-				const response = await fetch('/api/proxy', {
-					method: 'POST',
-					headers: {
-						'Content-Type': 'application/json'
-					},
-					body: JSON.stringify({
-						interval: selectedInterval
-					})
-				});
-				if (response.ok) {
-					const newPrices = await response.json();
-					if (JSON.stringify(newPrices) !== JSON.stringify(data)) {
-						localStorage.setItem(cacheKey, JSON.stringify({ data: newPrices, timestamp: now }));
-						pricing.set(newPrices);
-					}
-					dataLoaded = true;
-				}
+			const parsedCache = JSON.parse(cachedData);
+			if (now - parsedCache.timestamp < 24 * 60 * 60 * 1000) {
+				dataLoaded = await fetchAndCacheData(selectedInterval, cacheKey, now, true, parsedCache);
 			}
 		}
 
 		if (!dataLoaded) {
-			try {
-				const response = await fetch('/api/proxy', {
-					method: 'POST',
-					headers: {
-						'Content-Type': 'application/json'
-					},
-					body: JSON.stringify({
-						interval: selectedInterval
-					})
-				});
-
-				if (response.ok) {
-					const data = await response.json();
-					localStorage.setItem(cacheKey, JSON.stringify({ data, timestamp: now }));
-					pricing.set(data);
-				} else {
-					console.error('Failed to fetch data');
-				}
-			} catch (error) {
-				console.error('Failed to fetch data', error);
-			}
+			await fetchAndCacheData(selectedInterval, cacheKey, now);
 		}
 
 		isLoading.set(false);
