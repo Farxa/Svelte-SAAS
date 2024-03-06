@@ -16,26 +16,27 @@
 			emailValidationMessage.set('Please enter a valid email address.');
 			return;
 		}
+		successMessage.set('Thank you for subscribing!');
+		// The following code snippet is an example of how I would implement sending the email to the backend and calling the subscribe endpoint.
 
-		try {
-			const response = await fetch('/api/validate-email', {
-				method: 'POST',
-				headers: {
-					'Content-Type': 'application/json'
-				},
-				body: JSON.stringify({ email })
-			});
+		// try {
+		// 	const response = await fetch('/BACKEND_ENDPOINT', {
+		// 		method: 'POST',
+		// 		headers: {
+		// 			'Content-Type': 'application/json'
+		// 		},
+		// 		body: JSON.stringify({ email })
+		// 	});
 
-			if (response.ok) {
-				const { message } = await response.json();
-				successMessage.set(message);
-			} else {
-				const { error } = await response.json();
-				emailValidationMessage.set(error || 'Failed to validate email.');
-			}
-		} catch (error) {
-			emailValidationMessage.set('An error occurred while validating the email.');
-		}
+		// 	if (!response.ok) {
+		// 		throw new Error('Failed to subscribe');
+		// 	}
+
+		// 	const data = await response.json();
+		// 	successMessage.set('Thank you for subscribing!');
+		// } catch (error) {
+		// 	emailValidationMessage.set('There was a problem with your subscription. Please try again.');
+		// }
 	}
 
 	function handleSubmit(event: Event) {
@@ -49,8 +50,8 @@
 		title="Sign up for our newsletter"
 		description="Stay up to date with the roadmap progress, announcements and exclusive discounts feel free to sign up with your email."
 	/>
-	<form on:submit={handleSubmit} class="p-4 w-full max-w-lg mx-auto" novalidate>
-		<div class="flex flex-col md:flex-row items-center space-y-4 sm:space-y-0">
+	<form on:submit={handleSubmit} class="w-full max-w-lg mx-auto" novalidate>
+		<div class="flex flex-row items-center space-y-0">
 			<div class="relative flex-1">
 				<span class="absolute inset-y-0 left-0 flex items-center pl-3">
 					<IconifyIcon icon="mdi:email-outline" class="text-gray-500" />
@@ -58,11 +59,12 @@
 				<input
 					type="email"
 					placeholder="Enter your email"
-					class="w-full py-3 px-6 pl-10 border rounded-lg md:rounded-r-none md:rounded-l-lg placeholder-gray-500 focus:outline-none focus:bg-[#F9FAFB]"
+					class="w-full py-3 px-6 pl-10 border rounded-r-none rounded-l-lg placeholder-gray-500 focus:outline-none focus:bg-[#F9FAFB]"
+					bind:value={email}
 				/>
 			</div>
 			<button
-				class="bg-[#1C64F2] text-white border font-bold py-3 px-6 rounded-lg md:rounded-l-none md:rounded-r-lg focus:outline-none focus:shadow-outline"
+				class="bg-[#1C64F2] text-white border font-bold py-3 px-6 rounded-l-none rounded-r-lg focus:outline-none focus:shadow-outline"
 			>
 				Subscribe
 			</button>
