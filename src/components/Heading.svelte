@@ -9,7 +9,7 @@
 	<h1
 		class=" {isXl
 			? 'text-[30px] md:text-[30px] lg:text-[36px]'
-			: 'text-[26px] md:text-[30px] lg:text-[36px]'} {itemsAlignment === 'items-start'
+			: 'text-[24px] md:text-[30px] lg:text-[36px]'} {itemsAlignment === 'items-start'
 			? ' text-start'
 			: 'text-center'} text-[#111928]"
 	>

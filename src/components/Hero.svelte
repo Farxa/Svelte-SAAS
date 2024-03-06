@@ -7,9 +7,9 @@
 </script>
 
 <div class="h-screen">
-	<div class="h-screen flex flex-col lg:flex-row items-center">
+	<div class="h-screen flex flex-col lg:flex-row items-center justify-center">
 		<PageWrapper>
-			<div class="flex-1 mb-6 lg:mb-0">
+			<div class="mb-6 mx-5 lg:mx-0 lg:mb-0">
 				<Heading
 					title="We invest in the world's potential"
 					description="Here at flowbite we focus on markets where technology, innovation, and capital can unlock
